@@ -1,4 +1,4 @@
-# anonymous-student-platform
+# Anonymous student platform
 Anonymous University Platform
 
 A backend system for anonymous academic interaction within a university environment. The platform enables students to share study materials, discuss subjects, and provide anonymous feedback on courses and instructors.
