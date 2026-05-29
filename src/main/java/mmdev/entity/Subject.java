@@ -2,7 +2,6 @@ package mmdev.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.List;
 
 @Entity
@@ -30,7 +29,7 @@ public class Subject {
     @Column(name = "semester")
     private int semester;
 
-    @OneToMany(mappedBy = "subject")
+    @OneToMany(mappedBy = "subject",fetch = FetchType.LAZY)
     private List<Material> materials;
 
 }

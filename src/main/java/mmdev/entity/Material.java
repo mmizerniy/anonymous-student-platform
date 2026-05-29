@@ -37,7 +37,7 @@ public class Material {
     @JoinColumn(name = "author_id")
     private User author;
 
-    @OneToMany(mappedBy = "material")
+    @OneToMany(mappedBy = "material",fetch = FetchType.LAZY)
     private List<Comment> comments;
 
 }
