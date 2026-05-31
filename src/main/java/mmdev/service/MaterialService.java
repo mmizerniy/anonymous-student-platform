@@ -1,6 +1,7 @@
 package mmdev.service;
 
 import mmdev.entity.Material;
+import mmdev.exception.ResourceNotFoundException;
 import mmdev.repository.MaterialRepository;
 import org.springframework.stereotype.Service;
 
@@ -27,19 +28,19 @@ public class MaterialService {
 
     public Material getMaterialById(Long id){
         return materialRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Not found " + id));
+                .orElseThrow(()->new ResourceNotFoundException("Not found " + id));
     }
 
     public void deleteMaterial(Long id){
         if (!materialRepository.existsById(id)){
-            throw new RuntimeException("Material not found with id: " + id);
+            throw new ResourceNotFoundException("Material not found with id: " + id);
         }
         materialRepository.deleteById(id);
         System.out.println("Delete material with id: " + id);
     }
     public Material updateMaterial(Long id,Material material){
         Material oldMaterial = materialRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Not found with id " + id));
+                .orElseThrow(()->new ResourceNotFoundException("Not found with id " + id));
         oldMaterial.setTitle(material.getTitle());
         oldMaterial.setDescription(oldMaterial.getDescription());
         oldMaterial.setFileUrl(oldMaterial.getFileUrl());

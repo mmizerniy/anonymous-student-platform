@@ -2,6 +2,7 @@ package mmdev.service;
 
 
 import mmdev.entity.Subject;
+import mmdev.exception.ResourceNotFoundException;
 import mmdev.repository.SubjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class SubjectService {
 
     public Subject getSubjectById(Long id) {
         return subjectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     public List<Subject> getAllSubjects(){
@@ -33,7 +34,7 @@ public class SubjectService {
 
     public Subject updateSubject(Long id,Subject subject){
         Subject oldSubject = subjectRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Subject not found: " + id));
+                .orElseThrow(()->new ResourceNotFoundException("Subject not found: " + id));
         oldSubject.setName(subject.getName());
         oldSubject.setTeacherName(subject.getTeacherName());
         oldSubject.setFaculty(subject.getFaculty());
@@ -42,9 +43,9 @@ public class SubjectService {
         return subjectRepository.save(oldSubject);
     }
 
-    public void updateSubject(Long id){
+    public void deleteSubject(Long id){
         if (!subjectRepository.existsById(id)){
-            throw new RuntimeException("Subject not found with id: " + id);
+            throw new ResourceNotFoundException("Subject not found with id: " + id);
         }
         subjectRepository.deleteById(id);
     }

@@ -2,6 +2,7 @@ package mmdev.service;
 
 
 import mmdev.entity.Comment;
+import mmdev.exception.ResourceNotFoundException;
 import mmdev.repository.CommentRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class CommentService {
 
     public Comment getCommentById(Long id){
         return commentRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Comment not found with id: " + id));
+                .orElseThrow(()->new ResourceNotFoundException("Comment not found with id: " + id));
     }
 
     public List<Comment> getAllComments(){
@@ -32,7 +33,7 @@ public class CommentService {
 
     public void deleteComment(Long id){
         if (!commentRepository.existsById(id)){
-            throw new RuntimeException("Comment not found with id: " + id);
+            throw new ResourceNotFoundException("Comment not found with id: " + id);
         }
         commentRepository.deleteById(id);
     }
