@@ -1,7 +1,8 @@
 package mmdev.controller;
 
 
-import mmdev.entity.Comment;
+import mmdev.dto.request.CreateCommentRequest;
+import mmdev.dto.response.CommentResponse;
 import mmdev.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +21,12 @@ public class CommentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Comment createComment(@RequestBody Comment comment){
-        return commentService.createComment(comment);
+    public CommentResponse createComment(@RequestBody CreateCommentRequest request){
+        return commentService.createComment(request);
     }
 
     @GetMapping("/{id}")
-    public Comment getCommentById(@PathVariable Long id){
+    public CommentResponse getCommentById(@PathVariable Long id){
         return commentService.getCommentById(id);
     }
     @DeleteMapping("/{id}")
@@ -34,7 +35,7 @@ public class CommentController {
         commentService.deleteComment(id);
     }
     @GetMapping("/materials/{materialId}")
-    public List<Comment> getCommentsByMaterial(@PathVariable Long materialId){
+    public List<CommentResponse> getCommentsByMaterial(@PathVariable Long materialId){
         return commentService.getCommentsByMaterial(materialId);
     }
 }

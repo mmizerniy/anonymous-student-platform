@@ -1,7 +1,11 @@
 package mmdev.service;
 
+import mmdev.dto.request.CreateUserRequest;
+import mmdev.dto.request.UpdateUserRequest;
+import mmdev.dto.response.UserResponse;
 import mmdev.entity.User;
 import mmdev.exception.ResourceNotFoundException;
+import mmdev.mapper.UserMapper;
 import mmdev.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,25 +20,37 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(User user){
-        return userRepository.save(user);
+    public UserResponse createUser(CreateUserRequest request){
+        User user = UserMapper.toEntity(request);
+
+        User savedUser = userRepository.save(user);
+
+        return UserMapper.toResponse(savedUser);
     }
 
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
+    public List<UserResponse> getAllUsers(){
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::toResponse)
+                .toList();
     }
 
-    public User getUserById(Long id){
-        return userRepository.findById(id)
+    public UserResponse getUserById(Long id){
+        User user =  userRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found: " + id));
+        return UserMapper.toResponse(user);
     }
 
-    public User updateUser(Long id,User user){
-        User oldUser = userRepository.findById(id)
+    public UserResponse updateUser(Long id, UpdateUserRequest request){
+        User user = userRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("User not found: " + id));
-            oldUser.setEmail(user.getEmail());
-            oldUser.setUsername(user.getUsername());
-        return userRepository.save(oldUser);
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+
+        User updatedUser = userRepository.save(user);
+
+        return UserMapper.toResponse(updatedUser);
+
     }
 
     public void deleteUser(Long id){

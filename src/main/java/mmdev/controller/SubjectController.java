@@ -1,6 +1,9 @@
 package mmdev.controller;
 
 
+import mmdev.dto.request.CreateSubjectRequest;
+import mmdev.dto.request.UpdateSubjectRequest;
+import mmdev.dto.response.SubjectResponse;
 import mmdev.entity.Subject;
 import mmdev.service.SubjectService;
 import org.springframework.http.HttpStatus;
@@ -20,25 +23,25 @@ public class SubjectController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Subject createSubject(@RequestBody Subject subject){
-        return subjectService.createSubject(subject);
+    public SubjectResponse createSubject(@RequestBody CreateSubjectRequest request){
+        return subjectService.createSubject(request);
     }
 
     @GetMapping
-    public List<Subject> getAllSubjects(){
+    public List<SubjectResponse> getAllSubjects(){
         return subjectService.getAllSubjects();
     }
 
     @GetMapping("/{id}")
-    public Subject getSubjectById(@PathVariable Long id){
+    public SubjectResponse getSubjectById(@PathVariable Long id){
         return subjectService.getSubjectById(id);
     }
 
     @PutMapping("/{id}")
-    public Subject updateSubject(
-            @RequestBody Subject subject,
+    public SubjectResponse updateSubject(
+            @RequestBody UpdateSubjectRequest request,
             @PathVariable Long id){
-        return subjectService.updateSubject(id,subject);
+        return subjectService.updateSubject(id,request);
     }
 
     @DeleteMapping("/{id}")

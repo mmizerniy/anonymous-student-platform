@@ -1,8 +1,12 @@
 package mmdev.service;
 
 
+import mmdev.dto.request.CreateSubjectRequest;
+import mmdev.dto.request.UpdateSubjectRequest;
+import mmdev.dto.response.SubjectResponse;
 import mmdev.entity.Subject;
 import mmdev.exception.ResourceNotFoundException;
+import mmdev.mapper.SubjectMapper;
 import mmdev.repository.SubjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,28 +23,38 @@ public class SubjectService {
     }
 
 
-    public Subject createSubject(Subject subject) {
-        return subjectRepository.save(subject);
+    public SubjectResponse createSubject(CreateSubjectRequest request) {
+        Subject subject = SubjectMapper.toEntity(request);
+
+        Subject savedSubject = subjectRepository.save(subject);
+
+        return SubjectMapper.toResponse(savedSubject);
     }
 
-    public Subject getSubjectById(Long id) {
-        return subjectRepository.findById(id)
+    public SubjectResponse getSubjectById(Long id) {
+        Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        return SubjectMapper.toResponse(subject);
     }
 
-    public List<Subject> getAllSubjects(){
-        return subjectRepository.findAll();
+    public List<SubjectResponse> getAllSubjects(){
+        return subjectRepository.findAll()
+                .stream()
+                .map(SubjectMapper::toResponse)
+                .toList();
     }
 
-    public Subject updateSubject(Long id,Subject subject){
-        Subject oldSubject = subjectRepository.findById(id)
+    public SubjectResponse updateSubject(Long id, UpdateSubjectRequest request){
+        Subject subject = subjectRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Subject not found: " + id));
-        oldSubject.setName(subject.getName());
-        oldSubject.setTeacherName(subject.getTeacherName());
-        oldSubject.setFaculty(subject.getFaculty());
-        oldSubject.setSemester(subject.getSemester());
+        subject.setSemester(request.getSemester());
+        subject.setTeacherName(request.getTeacherName());
+        subject.setName(request.getName());
+        subject.setFaculty(request.getFaculty());
 
-        return subjectRepository.save(oldSubject);
+        Subject savedSubject = subjectRepository.save(subject);
+
+        return SubjectMapper.toResponse(savedSubject);
     }
 
     public void deleteSubject(Long id){

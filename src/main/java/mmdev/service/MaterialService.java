@@ -1,8 +1,16 @@
 package mmdev.service;
 
+import mmdev.dto.request.CreateMaterialRequest;
+import mmdev.dto.request.UpdateMaterialRequest;
+import mmdev.dto.response.MaterialResponse;
 import mmdev.entity.Material;
+import mmdev.entity.Subject;
+import mmdev.entity.User;
 import mmdev.exception.ResourceNotFoundException;
+import mmdev.mapper.MaterialMapper;
 import mmdev.repository.MaterialRepository;
+import mmdev.repository.SubjectRepository;
+import mmdev.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,24 +19,46 @@ import java.util.List;
 public class MaterialService {
 
     private final MaterialRepository materialRepository;
+    private final SubjectRepository subjectRepository;
+    private final UserRepository userRepository;
 
 
-    public MaterialService(MaterialRepository materialRepository) {
+    public MaterialService(MaterialRepository materialRepository, SubjectRepository subjectRepository, UserRepository userRepository) {
         this.materialRepository = materialRepository;
+        this.subjectRepository = subjectRepository;
+        this.userRepository = userRepository;
     }
 
+    public MaterialResponse createMaterial(CreateMaterialRequest request){
 
-    public Material createMaterial(Material material){
-        return materialRepository.save(material);
+        Subject subject = subjectRepository.findById(request.getSubjectId())
+                .orElseThrow(()->
+                        new ResourceNotFoundException("Subject not found"));
+        User author = userRepository.findById(request.getAuthorId())
+                .orElseThrow(()->
+                        new ResourceNotFoundException("User not found"));
+
+        Material material = MaterialMapper.toEntity(request);
+
+        material.setSubject(subject);
+        material.setAuthor(author);
+
+        Material savedMaterial = materialRepository.save(material);
+
+        return MaterialMapper.toResponse(savedMaterial);
     }
 
-    public List<Material> getAllMaterials(){
-        return materialRepository.findAll();
+    public List<MaterialResponse> getAllMaterials(){
+        return materialRepository.findAll()
+                .stream()
+                .map(MaterialMapper::toResponse)
+                .toList();
     }
 
-    public Material getMaterialById(Long id){
-        return materialRepository.findById(id)
+    public MaterialResponse getMaterialById(Long id){
+        Material material = materialRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Not found " + id));
+        return MaterialMapper.toResponse(material);
     }
 
     public void deleteMaterial(Long id){
@@ -38,17 +68,34 @@ public class MaterialService {
         materialRepository.deleteById(id);
         System.out.println("Delete material with id: " + id);
     }
-    public Material updateMaterial(Long id,Material material){
-        Material oldMaterial = materialRepository.findById(id)
+    public MaterialResponse updateMaterial(Long id, UpdateMaterialRequest request){
+        Material material = materialRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Not found with id " + id));
-        oldMaterial.setTitle(material.getTitle());
-        oldMaterial.setDescription(oldMaterial.getDescription());
-        oldMaterial.setFileUrl(oldMaterial.getFileUrl());
+        material.setTitle(request.getTitle());
+        material.setDescription(request.getDescription());
+        material.setFileUrl(request.getFileUrl());
 
-        return materialRepository.save(oldMaterial);
+        if (request.getSubjectId() != null){
+            Subject subject = subjectRepository.findById(request.getSubjectId())
+                    .orElseThrow(()->
+                            new ResourceNotFoundException("Subject not found"));
+            material.setSubject(subject);
+        }
+        if (request.getAuthorId()!=null){
+            User user = userRepository.findById(request.getAuthorId())
+                    .orElseThrow(()->
+                            new ResourceNotFoundException("User not found"));
+            material.setAuthor(user);
+        }
+        Material saved = materialRepository.save(material);
+
+        return MaterialMapper.toResponse(saved);
     }
-    public List<Material> getMaterialsBySubject(Long subjectId){
-        return materialRepository.findSubjectsById(subjectId);
+    public List<MaterialResponse> getMaterialsBySubject(Long subjectId){
+        return materialRepository.findBySubjectId(subjectId)
+                .stream()
+                .map(MaterialMapper::toResponse)
+                .toList();
     }
 
 }
