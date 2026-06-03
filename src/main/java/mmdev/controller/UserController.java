@@ -4,9 +4,9 @@ import jakarta.validation.Valid;
 import mmdev.dto.request.CreateUserRequest;
 import mmdev.dto.request.UpdateUserRequest;
 import mmdev.dto.response.UserResponse;
-import mmdev.entity.User;
 import mmdev.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,6 +46,7 @@ public class UserController {
     }
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(@PathVariable Long id){
         userService.deleteUser(id);
     }

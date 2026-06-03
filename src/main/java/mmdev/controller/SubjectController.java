@@ -1,12 +1,14 @@
 package mmdev.controller;
 
 
+import jakarta.validation.Valid;
 import mmdev.dto.request.CreateSubjectRequest;
 import mmdev.dto.request.UpdateSubjectRequest;
 import mmdev.dto.response.SubjectResponse;
 import mmdev.entity.Subject;
 import mmdev.service.SubjectService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +25,7 @@ public class SubjectController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SubjectResponse createSubject(@RequestBody CreateSubjectRequest request){
+    public SubjectResponse createSubject(@Valid  @RequestBody CreateSubjectRequest request){
         return subjectService.createSubject(request);
     }
 
@@ -39,13 +41,14 @@ public class SubjectController {
 
     @PutMapping("/{id}")
     public SubjectResponse updateSubject(
-            @RequestBody UpdateSubjectRequest request,
+            @Valid @RequestBody UpdateSubjectRequest request,
             @PathVariable Long id){
         return subjectService.updateSubject(id,request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteSubject(@PathVariable Long id){
        subjectService.deleteSubject(id);
     }

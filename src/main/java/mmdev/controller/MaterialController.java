@@ -1,11 +1,13 @@
 package mmdev.controller;
 
 
+import jakarta.validation.Valid;
 import mmdev.dto.request.CreateMaterialRequest;
 import mmdev.dto.request.UpdateMaterialRequest;
 import mmdev.dto.response.MaterialResponse;
 import mmdev.service.MaterialService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +26,7 @@ public class MaterialController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MaterialResponse createMaterial(@RequestBody CreateMaterialRequest request){
+    public MaterialResponse createMaterial(@Valid @RequestBody CreateMaterialRequest request){
         return materialService.createMaterial(request);
     }
 
@@ -41,13 +43,14 @@ public class MaterialController {
     @PutMapping("/{id}")
     public MaterialResponse updateMaterial(
             @PathVariable Long id,
-            @RequestBody UpdateMaterialRequest request
+            @Valid @RequestBody UpdateMaterialRequest request
     ){
         return materialService.updateMaterial(id,request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteMaterial(@PathVariable Long id){
         materialService.deleteMaterial(id);
     }

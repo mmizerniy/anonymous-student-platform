@@ -36,4 +36,10 @@ public class User {
     @OneToMany(mappedBy = "author",fetch = FetchType.LAZY)
     private List<Comment> comments;
 
+    @Column(name = "password")
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 }

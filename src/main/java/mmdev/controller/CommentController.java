@@ -1,6 +1,7 @@
 package mmdev.controller;
 
 
+import jakarta.validation.Valid;
 import mmdev.dto.request.CreateCommentRequest;
 import mmdev.dto.response.CommentResponse;
 import mmdev.service.CommentService;
@@ -21,7 +22,7 @@ public class CommentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentResponse createComment(@RequestBody CreateCommentRequest request){
+    public CommentResponse createComment(@Valid @RequestBody CreateCommentRequest request){
         return commentService.createComment(request);
     }
 
