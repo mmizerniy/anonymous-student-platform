@@ -4,8 +4,10 @@ package mmdev.controller;
 import jakarta.validation.Valid;
 import mmdev.dto.request.CreateCommentRequest;
 import mmdev.dto.response.CommentResponse;
+import mmdev.security.CustomUserDetails;
 import mmdev.service.CommentService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +24,11 @@ public class CommentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentResponse createComment(@Valid @RequestBody CreateCommentRequest request){
-        return commentService.createComment(request);
+    public CommentResponse createComment(
+            @Valid @RequestBody CreateCommentRequest request,
+            @AuthenticationPrincipal CustomUserDetails currentUser){
+        String authorUsername = currentUser.getUsername();
+        return commentService.createComment(request,authorUsername);
     }
 
     @GetMapping("/{id}")

@@ -59,4 +59,11 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+
+    public void banUser(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
+        user.setBanned(true);
+        userRepository.save(user);
+    }
 }

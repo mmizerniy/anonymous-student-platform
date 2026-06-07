@@ -35,4 +35,7 @@ public class Comment {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private boolean isHidden = false;
+
 }

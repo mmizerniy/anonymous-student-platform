@@ -2,6 +2,7 @@ package mmdev.dto.request;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -10,8 +11,6 @@ public class CreateCommentRequest {
     @NotBlank
     @Size(min = 3)
     private String text;
-    @NotBlank
+    @NotNull
     private Long materialId;
-    @NotBlank
-    private Long authorId;
 }

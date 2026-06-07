@@ -32,4 +32,8 @@ public class Subject {
     @OneToMany(mappedBy = "subject",fetch = FetchType.LAZY)
     private List<Material> materials;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "university_id")
+    private University university;
+
 }

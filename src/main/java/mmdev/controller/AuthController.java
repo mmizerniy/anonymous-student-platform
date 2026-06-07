@@ -2,7 +2,9 @@ package mmdev.controller;
 
 
 import jakarta.validation.Valid;
+import mmdev.dto.request.LoginRequest;
 import mmdev.dto.request.RegisterRequest;
+import mmdev.dto.response.AuthResponse;
 import mmdev.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +15,9 @@ public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
+
+    public AuthController(
+            AuthService authService) {
         this.authService = authService;
     }
 
@@ -21,5 +25,12 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public void register(@Valid @RequestBody RegisterRequest request){
         authService.register(request);
+    }
+
+    @PostMapping("/login")
+    public AuthResponse login(
+            @Valid @RequestBody LoginRequest request
+            ){
+        return authService.login(request);
     }
 }

@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import mmdev.dto.request.CreateSubjectRequest;
 import mmdev.dto.request.UpdateSubjectRequest;
 import mmdev.dto.response.SubjectResponse;
-import mmdev.entity.Subject;
 import mmdev.service.SubjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;

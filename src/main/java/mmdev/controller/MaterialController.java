@@ -26,16 +26,19 @@ public class MaterialController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('STUDENT')")
     public MaterialResponse createMaterial(@Valid @RequestBody CreateMaterialRequest request){
         return materialService.createMaterial(request);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('STUDENT','MODERATOR','ADMIN')")
     public List<MaterialResponse> getAllMaterials(){
         return materialService.getAllMaterials();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public MaterialResponse getMaterialById(@PathVariable Long id){
         return materialService.getMaterialById(id);
     }
