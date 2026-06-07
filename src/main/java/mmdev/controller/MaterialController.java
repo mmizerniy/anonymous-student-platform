@@ -87,4 +87,10 @@ public class MaterialController {
                 .body(resource);
     }
 
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('STUDENT','MODERATOR','ADMIN')")
+    public List<MaterialResponse> searchMaterials(@RequestParam String keyword){
+        return materialService.searchMaterials(keyword);
+    }
+
 }

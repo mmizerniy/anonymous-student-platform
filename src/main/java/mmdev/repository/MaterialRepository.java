@@ -8,4 +8,7 @@ import java.util.List;
 public interface MaterialRepository extends JpaRepository<Material,Long> {
 
     List<Material> findBySubjectId(Long subjectId);
+
+    List<Material> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String titleKeyword,String descriptionKeyword);
+
 }

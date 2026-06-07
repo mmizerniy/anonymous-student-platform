@@ -119,5 +119,11 @@ public class MaterialService {
                 .map(MaterialMapper::toResponse)
                 .toList();
     }
-
+    public List<MaterialResponse> searchMaterials(String keyword){
+        return materialRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                keyword,keyword
+        ).stream()
+                .map(MaterialMapper::toResponse)
+                .toList();
+    }
 }
