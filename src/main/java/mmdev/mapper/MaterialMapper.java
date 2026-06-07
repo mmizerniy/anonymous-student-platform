@@ -20,7 +20,6 @@ public class MaterialMapper {
         return Material.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .fileUrl(request.getFileUrl())
                 .build();
     }
 

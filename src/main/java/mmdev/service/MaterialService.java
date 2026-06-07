@@ -11,7 +11,9 @@ import mmdev.mapper.MaterialMapper;
 import mmdev.repository.MaterialRepository;
 import mmdev.repository.SubjectRepository;
 import mmdev.repository.UserRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,27 +23,47 @@ public class MaterialService {
     private final MaterialRepository materialRepository;
     private final SubjectRepository subjectRepository;
     private final UserRepository userRepository;
+    private final FileStorageService fileStorageService;
 
 
-    public MaterialService(MaterialRepository materialRepository, SubjectRepository subjectRepository, UserRepository userRepository) {
+    public MaterialService(MaterialRepository materialRepository,
+                           SubjectRepository subjectRepository,
+                           UserRepository userRepository,
+                           FileStorageService fileStorageService) {
         this.materialRepository = materialRepository;
         this.subjectRepository = subjectRepository;
         this.userRepository = userRepository;
+        this.fileStorageService = fileStorageService;
     }
 
-    public MaterialResponse createMaterial(CreateMaterialRequest request){
+    public MaterialResponse createMaterial(CreateMaterialRequest request,
+                                           MultipartFile file,
+                                           String authorUsername){
 
         Subject subject = subjectRepository.findById(request.getSubjectId())
                 .orElseThrow(()->
                         new ResourceNotFoundException("Subject not found"));
-        User author = userRepository.findById(request.getAuthorId())
+        User author = userRepository.findByUsername(authorUsername)
                 .orElseThrow(()->
                         new ResourceNotFoundException("User not found"));
+
+        if (author.getUniversity() == null) {
+            throw new IllegalArgumentException("In your profile not chosen university");
+        }
+        if (subject.getUniversity() == null) {
+            throw new IllegalArgumentException("In this subject not chosen university");
+        }
+        if (!author.getUniversity().getId().equals(subject.getUniversity().getId())){
+            throw new AccessDeniedException("You can add materials only for your university!");
+        }
+
+        String fileName = fileStorageService.saveFile(file);
 
         Material material = MaterialMapper.toEntity(request);
 
         material.setSubject(subject);
         material.setAuthor(author);
+        material.setFileUrl(fileName);
 
         Material savedMaterial = materialRepository.save(material);
 
