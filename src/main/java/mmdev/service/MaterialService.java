@@ -11,6 +11,8 @@ import mmdev.mapper.MaterialMapper;
 import mmdev.repository.MaterialRepository;
 import mmdev.repository.SubjectRepository;
 import mmdev.repository.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +38,7 @@ public class MaterialService {
         this.fileStorageService = fileStorageService;
     }
 
+    @CacheEvict(value = "materialsBySubject",key = "#request.getSubjectId()")
     public MaterialResponse createMaterial(CreateMaterialRequest request,
                                            MultipartFile file,
                                            String authorUsername){
@@ -113,6 +116,7 @@ public class MaterialService {
 
         return MaterialMapper.toResponse(saved);
     }
+    @Cacheable(value = "materialsBySubject",key = "#subjectId")
     public List<MaterialResponse> getMaterialsBySubject(Long subjectId){
         return materialRepository.findBySubjectId(subjectId)
                 .stream()
